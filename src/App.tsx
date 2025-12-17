@@ -4,6 +4,8 @@ import React, { useState } from "react";
 const App: React.FC = () => {
   const [showVinInput, setShowVinInput] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sentPopup, setSentPopup] = useState(false);
+
 
   const [form, setForm] = useState({
     fullName: "",
@@ -43,6 +45,51 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-50">
+      {sentPopup && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-10">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setSentPopup(false)}
+          />
+
+          {/* Modal */}
+          <div className="relative z-10 w-[90%] max-w-md rounded-3xl border border-lime-400/40 bg-neutral-950 px-6 py-5 shadow-xl">
+            <button
+              onClick={() => setSentPopup(false)}
+              className="absolute top-3 right-3 text-neutral-400 hover:text-neutral-200 transition"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-10 w-10 rounded-full bg-lime-400 flex items-center justify-center text-black font-bold">
+                ✓
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-50">
+                Inquiry Sent
+              </h3>
+            </div>
+
+            <p className="text-sm text-neutral-300 leading-relaxed">
+              Thanks for reaching out. Your build inquiry has been sent successfully.
+              Our team will review the details and follow up with next steps shortly.
+            </p>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setSentPopup(false)}
+                className="rounded-full bg-lime-400 px-4 py-2 text-xs font-semibold uppercase text-black hover:bg-lime-300 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
       <header className="sticky top-0 z-30 bg-neutral-950/80 backdrop-blur border-b border-neutral-800">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -566,7 +613,9 @@ const App: React.FC = () => {
               try {
                 setLoading(true);
                 await sendEmail();
-                setLoading(false);
+
+                setSentPopup(true);
+
                 setForm({
                   fullName: "",
                   email: "",
@@ -582,6 +631,7 @@ const App: React.FC = () => {
                 });
               } catch (error) {
                 console.log(error);
+              } finally {
                 setLoading(false);
               }
             }}
