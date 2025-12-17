@@ -1,7 +1,45 @@
+import axios from "axios";
 import React, { useState } from "react";
 
 const App: React.FC = () => {
   const [showVinInput, setShowVinInput] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    cityState: "",
+    truckDetails: "",
+    vin: "",
+    intendedUse: "",
+    timeline: "",
+    packageInterest: "",
+    idealBuild: "",
+    agreeToVariablePricing: false,
+  });
+
+  const handleChange =
+    (key: keyof typeof form) =>
+      (
+        e: React.ChangeEvent<
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >
+      ) => {
+        const value =
+          e.target instanceof HTMLInputElement && e.target.type === "checkbox"
+            ? e.target.checked
+            : e.target.value;
+
+        setForm((prev) => ({ ...prev, [key]: value }));
+      };
+
+  const sendEmail = async () => {
+    await axios.post("/api/contact", { ...form });
+  };
+
+  const { fullName, email, phone, cityState, truckDetails, intendedUse, timeline, agreeToVariablePricing } = form;
+  const allFieldsFilled = fullName && email && phone && cityState && truckDetails && intendedUse && timeline && agreeToVariablePricing;
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-50">
@@ -30,9 +68,6 @@ const App: React.FC = () => {
             <a href="#faq" className="hover:text-lime-400 transition">
               FAQ
             </a>
-            {/* <a href="/inventory" className="hover:text-lime-400 transition">
-              Inventory
-            </a> */}
           </nav>
 
           <a
@@ -205,7 +240,7 @@ const App: React.FC = () => {
               },
               {
                 title: "Real Clearance",
-                body: "38–41\" diameter options with trimmed and re-worked fenders for proper articulation.",
+                body: '38–41" diameter options with trimmed and re-worked fenders for proper articulation.',
               },
               {
                 title: "Simplified Footprint",
@@ -252,7 +287,7 @@ const App: React.FC = () => {
                 name: "Work Series",
                 tagline: "Daily work truck, leveled stance.",
                 bullets: [
-                  "38\" super singles",
+                  '38" super singles',
                   "Minimal lift, optimized steering geometry",
                   "Front & rear bumper upgrades optional",
                   "Perfect for flatbeds, service bodies & fleets",
@@ -272,7 +307,7 @@ const App: React.FC = () => {
                 name: "Premier Edition",
                 tagline: "Maximum capability, signature build.",
                 bullets: [
-                  "41\" tires on premium wheels",
+                  '41" tires on premium wheels',
                   "Full armor, lighting & custom details",
                   "Interior upgrades & electronics",
                   "Limited build slots per year",
@@ -360,10 +395,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <section
-        id="gallery"
-        className="border-t border-neutral-900 bg-black/95"
-      >
+      <section id="gallery" className="border-t border-neutral-900 bg-black/95">
         <div className="mx-auto max-w-6xl px-4 py-14 lg:py-16">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
@@ -371,7 +403,8 @@ const App: React.FC = () => {
                 Gallery
               </h2>
               <p className="text-sm text-neutral-300 max-w-xl">
-                Real trucks working in the field. From coastal beaches to mountain trails to desert terrain.
+                Real trucks working in the field. From coastal beaches to
+                mountain trails to desert terrain.
               </p>
             </div>
           </div>
@@ -410,10 +443,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <section
-        id="process"
-        className="border-t border-neutral-900 bg-neutral-950"
-      >
+      <section id="process" className="border-t border-neutral-900 bg-neutral-950">
         <div className="mx-auto max-w-6xl px-4 py-14 lg:py-16">
           <h2 className="text-2xl sm:text-3xl font-semibold mb-3">
             How It Works
@@ -470,7 +500,8 @@ const App: React.FC = () => {
             Frequently Asked Questions
           </h2>
           <p className="text-sm text-neutral-300 max-w-2xl mb-8">
-            Common questions about single wheel conversions and our build process.
+            Common questions about single wheel conversions and our build
+            process.
           </p>
 
           <div className="space-y-4 text-sm">
@@ -523,30 +554,61 @@ const App: React.FC = () => {
             </h2>
             <p className="text-sm text-neutral-300">
               Tell us about your F-450, how you use it, and what you want it to
-              do. We'll follow up with questions, a draft spec, and quote
-              ranges — no automated pricing, ever.
+              do. We'll follow up with questions, a draft spec, and quote ranges
+              — no automated pricing, ever.
             </p>
           </div>
 
           <form
             className="grid md:grid-cols-2 gap-4 text-sm"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                setLoading(true);
+                await sendEmail();
+                setLoading(false);
+                setForm({
+                  fullName: "",
+                  email: "",
+                  phone: "",
+                  cityState: "",
+                  truckDetails: "",
+                  vin: "",
+                  intendedUse: "",
+                  timeline: "",
+                  packageInterest: "",
+                  idealBuild: "",
+                  agreeToVariablePricing: false,
+                });
+              } catch (error) {
+                console.log(error);
+                setLoading(false);
+              }
+            }}
           >
             <input
               className="md:col-span-1 rounded-2xl border border-neutral-700 bg-black/60 px-3 py-2 outline-none focus:border-lime-400"
               placeholder="Full name"
+              value={form.fullName}
+              onChange={handleChange("fullName")}
             />
             <input
               className="md:col-span-1 rounded-2xl border border-neutral-700 bg-black/60 px-3 py-2 outline-none focus:border-lime-400"
               placeholder="Email"
+              value={form.email}
+              onChange={handleChange("email")}
             />
             <input
               className="md:col-span-1 rounded-2xl border border-neutral-700 bg-black/60 px-3 py-2 outline-none focus:border-lime-400"
               placeholder="Phone"
+              value={form.phone}
+              onChange={handleChange("phone")}
             />
             <input
               className="md:col-span-1 rounded-2xl border border-neutral-700 bg-black/60 px-3 py-2 outline-none focus:border-lime-400"
               placeholder="City / State"
+              value={form.cityState}
+              onChange={handleChange("cityState")}
             />
 
             <div className="md:col-span-1 rounded-2xl border border-neutral-700 bg-black/60 px-3 py-2">
@@ -555,12 +617,29 @@ const App: React.FC = () => {
               </label>
               <select
                 className="w-full bg-transparent text-sm outline-none"
-                onChange={(e) => setShowVinInput(e.target.value === "Provide My Own Truck")}
+                value={form.truckDetails}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setForm((prev) => ({
+                    ...prev,
+                    truckDetails: v,
+                    vin: v === "Provide My Own Truck" ? prev.vin : "",
+                  }));
+                  setShowVinInput(v === "Provide My Own Truck");
+                }}
               >
-                <option value="" className="text-black">Select one</option>
-                <option className="text-black">NEW 2026 Ford F450 Lariat</option>
-                <option className="text-black">NEW 2026 Ford F450 King Ranch</option>
-                <option className="text-black">NEW 2026 Ford F450 Platinum</option>
+                <option value="" className="text-black">
+                  Select one
+                </option>
+                <option className="text-black">
+                  NEW 2026 Ford F450 Lariat
+                </option>
+                <option className="text-black">
+                  NEW 2026 Ford F450 King Ranch
+                </option>
+                <option className="text-black">
+                  NEW 2026 Ford F450 Platinum
+                </option>
                 <option className="text-black">Provide My Own Truck</option>
               </select>
             </div>
@@ -573,6 +652,8 @@ const App: React.FC = () => {
                 <input
                   className="w-full bg-transparent text-sm outline-none placeholder:text-neutral-500"
                   placeholder="Enter your vehicle VIN"
+                  value={form.vin}
+                  onChange={handleChange("vin")}
                 />
               </div>
             )}
@@ -584,6 +665,8 @@ const App: React.FC = () => {
               <input
                 className="w-full bg-transparent text-sm outline-none placeholder:text-neutral-500"
                 placeholder="Work / overland / camper / toy-hauler / other"
+                value={form.intendedUse}
+                onChange={handleChange("intendedUse")}
               />
             </div>
 
@@ -591,8 +674,14 @@ const App: React.FC = () => {
               <label className="block text-[11px] text-neutral-400 mb-1">
                 Timeline
               </label>
-              <select className="w-full bg-transparent text-sm outline-none ">
-                <option value="" className="text-black">Select one</option>
+              <select
+                className="w-full bg-transparent text-sm outline-none"
+                value={form.timeline}
+                onChange={handleChange("timeline")}
+              >
+                <option value="" className="text-black">
+                  Select one
+                </option>
                 <option className="text-black">0–3 months</option>
                 <option className="text-black">3–6 months</option>
                 <option className="text-black">6+ months</option>
@@ -604,8 +693,14 @@ const App: React.FC = () => {
               <label className="block text-[11px] text-neutral-400 mb-1">
                 Package Interest
               </label>
-              <select className="w-full bg-transparent text-sm outline-none">
-                <option value="" className="text-black">Not sure yet</option>
+              <select
+                className="w-full bg-transparent text-sm outline-none"
+                value={form.packageInterest}
+                onChange={handleChange("packageInterest")}
+              >
+                <option value="" className="text-black">
+                  Not sure yet
+                </option>
                 <option className="text-black">Work Series</option>
                 <option className="text-black">Overland Series</option>
                 <option className="text-black">Premier Edition</option>
@@ -619,11 +714,18 @@ const App: React.FC = () => {
               <textarea
                 className="w-full bg-transparent text-sm outline-none placeholder:text-neutral-500 min-h-[120px]"
                 placeholder="Payload target, camper/bed details, terrain, must-have gear, etc."
+                value={form.idealBuild}
+                onChange={handleChange("idealBuild")}
               />
             </div>
 
             <label className="md:col-span-2 flex items-start gap-2 text-[11px] text-neutral-400">
-              <input type="checkbox" className="mt-[3px]" />
+              <input
+                type="checkbox"
+                className="mt-[3px]"
+                checked={form.agreeToVariablePricing}
+                onChange={handleChange("agreeToVariablePricing")}
+              />
               <span>
                 I understand that pricing is provided by custom quote and may
                 vary based on final configuration and parts availability.
@@ -633,13 +735,21 @@ const App: React.FC = () => {
             <div className="md:col-span-2 flex flex-wrap items-center gap-3">
               <button
                 type="submit"
-                className="rounded-full bg-lime-400 px-6 py-2.5 text-xs font-semibold tracking-wide uppercase text-black hover:bg-lime-300 transition"
+                disabled={loading || !allFieldsFilled}
+                className="w-[220px] justify-center rounded-full bg-lime-400 px-6 py-2.5 text-xs font-semibold tracking-wide uppercase text-black hover:bg-lime-300 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                Send My Build Specs
+                {loading && (
+                  <span
+                    className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"
+                    aria-hidden
+                  />
+                )}
+
+                <span>{loading ? "Sending..." : "Send My Build Specs"}</span>
               </button>
+
               <p className="text-[11px] text-neutral-500">
-                By submitting, you agree to be contacted about build options
-                and scheduling.
+                By submitting, you agree to be contacted about build options and scheduling.
               </p>
             </div>
           </form>
@@ -649,9 +759,7 @@ const App: React.FC = () => {
       <footer className="border-t border-neutral-900 bg-black">
         <div className="mx-auto max-w-6xl px-4 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[11px] text-neutral-500">
           <div>
-            <p className="font-semibold text-neutral-200">
-              SingleTrack F450
-            </p>
+            <p className="font-semibold text-neutral-200">SingleTrack F450</p>
             <p>
               Custom Ford F-450 single wheel conversions and turn-key trucks for
               work and off-grid travel.
@@ -659,7 +767,6 @@ const App: React.FC = () => {
           </div>
           <div className="text-right space-y-1">
             <p>Email: custom@premierfleets.com</p>
-            {/* <p>Instagram / YouTube / Facebook</p> */}
             <p>
               Not affiliated with Ford Motor Company or any OEM. All trademarks
               belong to their respective owners.
@@ -678,9 +785,7 @@ type DetailBlockProps = {
 
 const DetailBlock: React.FC<DetailBlockProps> = ({ label, body }) => (
   <div className="rounded-2xl border border-neutral-800 bg-black/50 p-4">
-    <p className="text-[11px] font-semibold text-neutral-400 mb-1">
-      {label}
-    </p>
+    <p className="text-[11px] font-semibold text-neutral-400 mb-1">{label}</p>
     <p className="text-[13px] text-neutral-200">{body}</p>
   </div>
 );
