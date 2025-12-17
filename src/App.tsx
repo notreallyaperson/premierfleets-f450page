@@ -30,9 +30,9 @@ const App: React.FC = () => {
             <a href="#faq" className="hover:text-lime-400 transition">
               FAQ
             </a>
-            <a href="/inventory" className="hover:text-lime-400 transition">
+            {/* <a href="/inventory" className="hover:text-lime-400 transition">
               Inventory
-            </a>
+            </a> */}
           </nav>
 
           <a
@@ -557,11 +557,11 @@ const App: React.FC = () => {
                 className="w-full bg-transparent text-sm outline-none"
                 onChange={(e) => setShowVinInput(e.target.value === "Provide My Own Truck")}
               >
-                <option value="">Select one</option>
-                <option>NEW 2026 Ford F450 Lariat</option>
-                <option>NEW 2026 Ford F450 King Ranch</option>
-                <option>NEW 2026 Ford F450 Platinum</option>
-                <option>Provide My Own Truck</option>
+                <option value="" className="text-black">Select one</option>
+                <option className="text-black">NEW 2026 Ford F450 Lariat</option>
+                <option className="text-black">NEW 2026 Ford F450 King Ranch</option>
+                <option className="text-black">NEW 2026 Ford F450 Platinum</option>
+                <option className="text-black">Provide My Own Truck</option>
               </select>
             </div>
 
@@ -591,12 +591,12 @@ const App: React.FC = () => {
               <label className="block text-[11px] text-neutral-400 mb-1">
                 Timeline
               </label>
-              <select className="w-full bg-transparent text-sm outline-none">
-                <option value="">Select one</option>
-                <option>0–3 months</option>
-                <option>3–6 months</option>
-                <option>6+ months</option>
-                <option>Just researching</option>
+              <select className="w-full bg-transparent text-sm outline-none ">
+                <option value="" className="text-black">Select one</option>
+                <option className="text-black">0–3 months</option>
+                <option className="text-black">3–6 months</option>
+                <option className="text-black">6+ months</option>
+                <option className="text-black">Just researching</option>
               </select>
             </div>
 
@@ -605,10 +605,10 @@ const App: React.FC = () => {
                 Package Interest
               </label>
               <select className="w-full bg-transparent text-sm outline-none">
-                <option value="">Not sure yet</option>
-                <option>Work Series</option>
-                <option>Overland Series</option>
-                <option>Premier Edition</option>
+                <option value="" className="text-black">Not sure yet</option>
+                <option className="text-black">Work Series</option>
+                <option className="text-black">Overland Series</option>
+                <option className="text-black">Premier Edition</option>
               </select>
             </div>
 
@@ -658,8 +658,8 @@ const App: React.FC = () => {
             </p>
           </div>
           <div className="text-right space-y-1">
-            <p>Email: builds@example.com</p>
-            <p>Instagram / YouTube / Facebook</p>
+            <p>Email: custom@premierfleets.com</p>
+            {/* <p>Instagram / YouTube / Facebook</p> */}
             <p>
               Not affiliated with Ford Motor Company or any OEM. All trademarks
               belong to their respective owners.
